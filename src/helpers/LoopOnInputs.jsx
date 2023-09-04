@@ -18,9 +18,9 @@ export const LoopOnInputs = (props) =>
                     md={4}
                     sm={6}
                     xs={12}
+                    key={name}
                 >
                     <Input
-                        key={name}
                         name={name}
                         disabled={disabled}
                         {...input}

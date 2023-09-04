@@ -2,7 +2,7 @@ export const signUpInputs = [
     {
         control:"input",
         type:"text",
-        name:"businessName",
+        name:"bussinesName",
         label:"Business Name",
     },
     {
@@ -14,7 +14,7 @@ export const signUpInputs = [
     {
         control:"input",
         type:"text",
-        name:"industryOfBusiness",
+        name:"bussinesIndustry",
         label:"Industry of Business",
     },
     {
@@ -44,9 +44,9 @@ export const signUpInputs = [
 ];
 
 export const signUpInitialValues = {
-    businessName:"",
+    bussinesName:"",
     inventoryName:"",
-    industryOfBusiness:"",
+    bussinesIndustry:"",
     userName:"",
     email:"",
     password:"",

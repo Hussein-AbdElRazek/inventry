@@ -15,7 +15,7 @@ const useHttp = () =>
         try
         {
             const response =
-                await fetch(`https://koko-note.onrender.com/${requestConfig.url}`, {
+                await fetch(`https://inventory-v9mc.onrender.com/${requestConfig.url}`, {
                     method: requestConfig.method ? requestConfig.method : "GET",
                     headers: {
                         'Authorization': 'Bearer ' + authCtx.token,
@@ -36,18 +36,10 @@ const useHttp = () =>
             {
                 message = data.message || data.msesage;
                 message = message.toLowerCase();
-                if (message.includes("success") || message.includes("sucess")) { popMessage(message, { variant: "success" }) }
-                else { popMessage(message) }
+                if (message.includes("success")) { popMessage(message, { variant: "success" }) }
+                else { popMessage(message, { variant: "info" }) }
 
             }
-            if (message !== "success" &&
-                message !== "sucess" &&
-                message !== "success and a verfication mail was sent"
-            )
-            {
-                throw new Error(message)
-            }
-
         } catch (error)
         {
             setIsLoading(false)

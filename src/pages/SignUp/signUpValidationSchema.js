@@ -1,11 +1,11 @@
 import *  as Yup from 'yup';
 
 export const signUpValidationSchema = Yup.object({
-    businessName: Yup.string()
+    bussinesName: Yup.string()
         .required("Required"),
     inventoryName: Yup.string()
         .required("Required"),
-    industryOfBusiness: Yup.string()
+    bussinesIndustry: Yup.string()
         .required("Required"),
     userName: Yup.string()
         .required("Required"),

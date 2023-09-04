@@ -1,5 +1,4 @@
 import React from 'react'
-import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 
 import useHttp from '../../hooks/use-http';
@@ -8,7 +7,6 @@ import SignUpUi from './SignUpUi';
 const SignUp = () =>
 {
     const navigate = useNavigate();
-    const { enqueueSnackbar: popMessage } = useSnackbar();
     const {
         isLoading: isLoadingSignUp,
         sendRequest: signUp
@@ -18,11 +16,8 @@ const SignUp = () =>
     {
         const getResponse = ({ message }) =>
         {
-            if (message === "success")
+            if (message === "success and your email was sent !")
             {
-                popMessage("Account created successfully", {
-                    variant: "success",
-                });
                 navigate("/login", { replace: true });
             }
         };
