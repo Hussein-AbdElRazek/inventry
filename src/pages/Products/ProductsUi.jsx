@@ -1,51 +1,57 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
+import { useState, useEffect, useCallback } from 'react';
+import { useSnackbar } from "notistack";
+import { Box } from '@mui/material';
+import
+{
+    Edit as EditIcon,
+    DeleteOutlined as DeleteIcon,
+    Save as SaveIcon,
+    Close as CancelIcon,
+} from '@mui/icons-material';
 import
 {
     GridRowModes,
     DataGrid,
-    GridToolbarContainer,
     GridActionsCellItem,
     GridRowEditStopReasons,
+    GridEditInputCell,
 } from '@mui/x-data-grid';
 
-function EditToolbar(props)
-{
-    const { setRows, setRowModesModel } = props;
-
-    const handleClick = () =>
-    {
-        const id = new Date().toISOString;
-        setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
-        setRowModesModel((oldModel) => ({
-            ...oldModel,
-            [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-        }));
-    };
-
-    return (
-        <GridToolbarContainer>
-            <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-                Add record
-            </Button>
-        </GridToolbarContainer>
-    );
-}
+import ProductsToolBar from './ProductsToolBar';
+import useValidateOnProduct from './use-validateOnProduct';
 
 const ProductsUi = (props) =>
 {
-    const {products} = props;
-    const [rows, setRows] = React.useState(products);
-    const [rowModesModel, setRowModesModel] = React.useState({});
-    React.useEffect(()=>{
+    const {
+        products,
+        isLoadingGetAllProducts,
+        currentPage,
+        setCurrentPage,
+        pageSize,
+        setPageSize,
+        totalNumberOfItems,
+        handleAddProduct,
+        errorAddProduct,
+        isLoadingAddProduct,
+        handleUpdateProduct,
+        errorUpdateProduct,
+        isLoadingUpdateProduct,
+        handleDeleteProduct,
+        errorDeleteProduct,
+        isLoadingDeleteProduct,
+    } = props;
+
+    const [rows, setRows] = useState(products);
+    const [rowModesModel, setRowModesModel] = useState({});
+
+    const { enqueueSnackbar: popMessage } = useSnackbar();
+
+    //set rows product form database
+    useEffect(() =>
+    {
         setRows(products)
     }, [products])
+
     const handleRowEditStop = (params, event) =>
     {
         if (params.reason === GridRowEditStopReasons.rowFocusOut)
@@ -64,9 +70,20 @@ const ProductsUi = (props) =>
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
 
-    const handleDeleteClick = (id) => () =>
+    //i store it for make current deleing item disabled
+    const [idDeletingNow, setIdDeletingNow] = useState([])
+    const handleDeleteClick = (id) => async () =>
     {
-        setRows(rows.filter((row) => row.id !== id));
+        setIdDeletingNow((prev) => [...prev, id]);
+        const res = await handleDeleteProduct(id);
+        if (res)
+        {
+            setRows((prev) => prev.filter((row) => row.id !== id));
+        } else
+        {
+            popMessage(!!errorDeleteProduct ? errorDeleteProduct : "Something went wrong", { variant: "error" })
+        }
+        setIdDeletingNow((prev) => prev.filter(ele => ele !== id))
     };
 
     const handleCancelClick = (id) => () =>
@@ -83,17 +100,56 @@ const ProductsUi = (props) =>
         }
     };
 
-    const processRowUpdate = (newRow) =>
-    {
-        const updatedRow = { ...newRow, isNew: false };
-        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        return updatedRow;
-    };
+    const validateOnProduct = useValidateOnProduct();
+
+    const processRowUpdate = useCallback(
+        async (newRow) =>
+        {
+            const dataIsValid = validateOnProduct(newRow);
+            if (dataIsValid)
+            {
+                const submitData = { ...newRow };
+                let res;
+                delete submitData.id;
+                if (newRow.isNew)
+                {
+                    delete submitData.isNew;
+                    res = await handleAddProduct(submitData);
+                    if (!res) throw new Error(!!errorAddProduct ? errorAddProduct : "Something went wrong");
+                } else
+                {
+                    delete submitData.addedAt;
+                    delete submitData.islimited;
+                    res = await handleUpdateProduct(submitData, newRow.id)
+                    if (!res) throw new Error(!!errorUpdateProduct ? errorUpdateProduct : "Something went wrong");
+                }
+                if (res)
+                {
+                    delete newRow.isNew
+                    //TODO handle add id when zezo return it
+                    return newRow;
+                }
+
+            } else
+            {
+                throw new Error("All fields required.")
+            }
+        },
+        [handleAddProduct, validateOnProduct, errorAddProduct, errorUpdateProduct, handleUpdateProduct],
+    );
 
     const handleRowModesModelChange = (newRowModesModel) =>
     {
         setRowModesModel(newRowModesModel);
     };
+    const editCellNumberInput = (params) => (
+        <GridEditInputCell
+            {...params}
+            inputProps={{
+                min: 0,
+            }}
+        />
+    );
 
     const columns = [
         {
@@ -101,59 +157,62 @@ const ProductsUi = (props) =>
             headerName: 'Name',
             width: 180,
             editable: true,
-            align: 'center',
-            headerAlign: 'center',
+            align: 'left',
+            headerAlign: 'left',
         },
         {
-            field: 'productSerialNumber', 
-            headerName: 'Serial Number', 
-            width: 180, 
-            editable: true, 
-            align: 'center',
-            headerAlign: 'center',
+            field: 'productSerialNumber',
+            headerName: 'Serial Number',
+            width: 180,
+            editable: true,
+            align: 'left',
+            headerAlign: 'left',
         },
         {
             field: 'productQuantity',
             headerName: 'Quantity',
             type: 'number',
             width: 80,
-            align: 'center',
-            headerAlign: 'center',
+            align: 'left',
+            headerAlign: 'left',
             editable: true,
+            renderEditCell: editCellNumberInput
         },
         {
             field: 'limit',
             headerName: 'Limit',
             type: 'number',
             width: 80,
-            align: 'center',
-            headerAlign: 'center',
+            align: 'left',
+            headerAlign: 'left',
             editable: true,
+            renderEditCell: editCellNumberInput
         },
         {
             field: 'productCategory',
             headerName: 'Category',
             width: 180,
             editable: true,
-            align: 'center',
-            headerAlign: 'center',
+            align: 'left',
+            headerAlign: 'left',
         },
         {
             field: 'countryOfProductOrigin',
             headerName: 'Country of ProductOrigin',
             width: 180,
             editable: true,
-            align: 'center',
-            headerAlign: 'center',
+            align: 'left',
+            headerAlign: 'left',
         },
         {
             field: 'productPrice',
             headerName: 'Price',
             type: 'number',
             width: 80,
-            align: 'center',
-            headerAlign: 'center',
+            align: 'left',
+            headerAlign: 'left',
             editable: true,
+            renderEditCell: editCellNumberInput
         },
         {
             field: 'actions',
@@ -192,18 +251,39 @@ const ProductsUi = (props) =>
                         label="Edit"
                         className="textPrimary"
                         onClick={handleEditClick(id)}
-                        color="primary"
+                        disabled={!!idDeletingNow.find((ele) => ele === id) && isLoadingDeleteProduct}
                     />,
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
                         label="Delete"
                         onClick={handleDeleteClick(id)}
                         color="error"
+                        disabled={!!idDeletingNow.find((ele) => ele === id) && isLoadingDeleteProduct}
                     />,
                 ];
             },
         },
     ];
+
+    const handleProcessRowUpdateError = (error) =>
+    {
+        popMessage(error.message, { variant: "error" })
+    }
+
+    //handlePagination
+    const [rowCountState, setRowCountState] = useState(pageSize);
+    useEffect(() =>
+    {
+        setRowCountState((prevRowCountState) =>
+            totalNumberOfItems !== undefined ? totalNumberOfItems : prevRowCountState,
+        );
+    }, [totalNumberOfItems, setRowCountState]);
+    const handlePaginationModelChange = (params) =>
+    {
+        setCurrentPage(params.page)
+        setPageSize(params.pageSize)
+
+    }
 
     return (
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
@@ -232,9 +312,24 @@ const ProductsUi = (props) =>
                     rowModesModel={rowModesModel}
                     onRowModesModelChange={handleRowModesModelChange}
                     onRowEditStop={handleRowEditStop}
+                    onProcessRowUpdateError={handleProcessRowUpdateError}
                     processRowUpdate={processRowUpdate}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: 10, page: 0 },
+                        },
+                    }}
+                    loading={isLoadingGetAllProducts}
+                    pagination
+                    paginationMode="server"
+                    page={currentPage}
+                    pageSize={pageSize}
+                    pageSizeOptions={[10]}
+                    rowCount={rowCountState}
+                    rowsPerPageOptions={[10]}
+                    onPaginationModelChange={handlePaginationModelChange}
                     slots={{
-                        toolbar: EditToolbar,
+                        toolbar: ProductsToolBar,
                     }}
                     slotProps={{
                         toolbar: { setRows, setRowModesModel },

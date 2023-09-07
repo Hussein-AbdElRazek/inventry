@@ -5,7 +5,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 const NavbarUi = () =>
 {
     return (
-        <Paper variant="outlined">
+        <Paper variant="outlined" sx={{position:"fixed", width:"100%", backgroundColor:"white", zIndex:999, borderRadius:0}}>
             <Toolbar>
                 <Typography
                     variant="h6"

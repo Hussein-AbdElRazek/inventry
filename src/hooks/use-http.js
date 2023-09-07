@@ -6,6 +6,7 @@ import { trimObject } from "../helpers/trimObject";
 const useHttp = () =>
 {
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
     const authCtx = useContext(AuthContext);
     const { enqueueSnackbar: popMessage } = useSnackbar();
 
@@ -43,6 +44,7 @@ const useHttp = () =>
         } catch (error)
         {
             setIsLoading(false)
+            setError(error.message || "Something went wrong")
             popMessage(error.message || "Something went wrong", { variant: "error" })
         }
         setIsLoading(false)
