@@ -23,6 +23,7 @@ const ChangePasswordUi = (props) =>
                     {
                         changePasswordDataInputs.map(input => (
                             <Input
+                                key={input.name}
                                 {...input}
                                 disabled={isLoadingChangePassword}
                             />

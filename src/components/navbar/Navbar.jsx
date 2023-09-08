@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'
+import { useSnackbar } from "notistack";
+
 import NavbarUi from './NavbarUi'
 import useHttp from '../../hooks/use-http';
 import SearchResult from './SearchResult';
 
 const Navbar = () =>
 {
+    const { enqueueSnackbar: popMessage } = useSnackbar();
+
     const {
         isLoading: isLoadingGetSpecificCategory,
         sendRequest: getSpecificCategory,
@@ -14,44 +18,60 @@ const Navbar = () =>
     const [pageSize, setPageSize] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
     const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
-    const [category, setCategory] = useState(null);
-    const handleGetSpecificCategory = (category) =>
+    const [productCategory, setProductCategory] = useState(null);
+    const [productName, setProductName] = useState(null);
+    const handleGetSearchData = (searchValue, by) =>
     {
         const getResponse = async ({ message, data, numOfPages, totalNumOfItems, numOfItems }) =>
         {
             if (message === "success")
             {
                 setSearchResultData(data.map(ele => ({ ...ele, id: ele._id })));
-                if (numOfPages !== totalPages) setTotalPages(numOfPages)
+                if (numOfPages !== totalPages) setTotalPages(numOfPages||1)
                 if (totalNumOfItems !== totalNumberOfItems) setTotalNumberOfItems(totalNumOfItems)
                 if (pageSize !== numOfItems) setPageSize(numOfItems)
-                setSearchResultOpen(true);
+                if(data.length>0)setSearchResultOpen(true);
+                else popMessage("No data found")
             }
         };
         if (currentPage < totalPages)
             getSpecificCategory(
                 {
-                    url: `getSpecificCategory/${category}?limit=${5}&page=${currentPage + 1}`,
+                    url: `getSpecific${by}/${searchValue}?limit=${10}&page=${currentPage + 1}`,
                     method: "GET",
                 },
                 getResponse
             );
     }
+    const [newSearch, setNewSearch] = useState(0);
     const handleSearch = (values) =>
     {
+        setNewSearch((prev) => prev + 1)
         if (values.searchBy === "category")
         {
-            handleGetSpecificCategory(values.searchValue)
-            setCategory(values.searchValue)
+            setProductCategory(values.searchValue)
+            setProductName(null);
+        } else
+        {
+            setProductName(values.searchValue)
+            setProductCategory(null);
         }
     }
     useEffect(() =>
     {
-        if (category)
+        if (productCategory)
         {
-            handleGetSpecificCategory(category)
+            handleGetSearchData(productCategory, "Category")
         }
-    }, [category, currentPage])
+    }, [productCategory, currentPage, newSearch])
+    useEffect(() =>
+    {
+        if (productName)
+        {
+            console.log("get data productName")
+            handleGetSearchData(productName, "Product")
+        }
+    }, [productName, currentPage, newSearch])
     const [isSearchResultOpen, setSearchResultOpen] = useState(false)
     return (
         <>
@@ -61,7 +81,7 @@ const Navbar = () =>
                 setSearchResultOpen={setSearchResultOpen}
                 searchResultData={searchResultData}
 
-                handleGetSpecificCategory={handleGetSpecificCategory}
+                handleGetSearchData={handleGetSearchData}
                 isLoadingGetSpecificCategory={isLoadingGetSpecificCategory}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}

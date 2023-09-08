@@ -63,12 +63,14 @@ const Products = () =>
     
     const handleAddProduct = async (values) =>
     {
-        let res = false;
-        const getResponse = async ({ message }) =>
+        let isOk = false;
+        let newProductId = null;
+        const getResponse = async ({ message, productId }) =>
         {
             if (message === "success")
             {
-                res = true;
+                isOk = true;
+                newProductId = productId;
             }
         };
         await addProduct(
@@ -79,16 +81,16 @@ const Products = () =>
             },
             getResponse
         );
-        return res
+        return { isOk: isOk, newProductId:newProductId }
     }
     const handleUpdateProduct = async (values, productId) =>
     {
-        let res = false;
+        let isOk = false;
         const getResponse = async ({ message }) =>
         {
             if (message === "success")
             {
-                res = true;;
+                isOk = true;
             }
         };
         await editProduct(
@@ -99,7 +101,7 @@ const Products = () =>
             },
             getResponse
         );
-        return res;
+        return isOk;
     }
     const handleDeleteProduct = async (productId) =>
     {

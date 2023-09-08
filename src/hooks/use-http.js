@@ -45,6 +45,7 @@ const useHttp = () =>
         {
             setIsLoading(false)
             setError(error.message || "Something went wrong")
+            //TODO handle every success message in every api page
             popMessage(error.message || "Something went wrong", { variant: "error" })
         }
         setIsLoading(false)

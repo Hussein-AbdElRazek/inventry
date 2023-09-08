@@ -100,7 +100,7 @@ const ProductTable = (props) =>
             rowCount={rowCountState}
             rowsPerPageOptions={[10]}
             onPaginationModelChange={handlePaginationModelChange}
-            sx={{maxHeight:"400px"}}
+            sx={{maxHeight:"400px", minHeight:300}}
         />
     )
 }

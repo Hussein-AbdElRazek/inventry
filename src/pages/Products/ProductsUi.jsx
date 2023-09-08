@@ -19,6 +19,7 @@ import
 
 import ProductsToolBar from './ProductsToolBar';
 import useValidateOnProduct from './use-validateOnProduct';
+import useNotification from '../../hooks/use-notification';
 
 const ProductsUi = (props) =>
 {
@@ -43,7 +44,7 @@ const ProductsUi = (props) =>
     const [rowModesModel, setRowModesModel] = useState({});
 
     const { enqueueSnackbar: popMessage } = useSnackbar();
-
+    const handleNotification = useNotification();
     //set rows product form database
     useEffect(() =>
     {
@@ -99,7 +100,7 @@ const ProductsUi = (props) =>
     };
 
     const validateOnProduct = useValidateOnProduct();
-
+    const [newProduct, setNewProduct] = useState(null);
     const processRowUpdate = useCallback(
         async (newRow) =>
         {
@@ -107,35 +108,62 @@ const ProductsUi = (props) =>
             if (dataIsValid)
             {
                 const submitData = { ...newRow };
-                let res;
+                let res, isOk;
                 delete submitData.id;
                 if (newRow.isNew)
                 {
                     delete submitData.isNew;
                     res = await handleAddProduct(submitData);
-                    if (!res) throw new Error(!!errorAddProduct ? errorAddProduct : "Something went wrong");
+                    isOk = res.isOk;
+                    if (!isOk) throw new Error(!!errorAddProduct ? errorAddProduct : "Something went wrong");
+                    else
+                    {
+                        newRow._id = res.newProductId;
+                        delete newRow.isNew
+                        //i store it for update id after data grid update data to old id
+                        setNewProduct(newRow)
+                        handleNotification(newRow);
+                        return newRow;
+                    }
                 } else
                 {
                     delete submitData.addedAt;
                     delete submitData.islimited;
-                    res = await handleUpdateProduct(submitData, newRow.id)
-                    if (!res) throw new Error(!!errorUpdateProduct ? errorUpdateProduct : "Something went wrong");
+                    isOk = await handleUpdateProduct(submitData, newRow.id)
+                    if (!isOk) throw new Error(!!errorUpdateProduct ? errorUpdateProduct : "Something went wrong");
+                    else
+                    {
+                        handleNotification(newRow);
+                        return newRow;
+                    }
                 }
-                if (res)
-                {
-                    delete newRow.isNew
-                    //TODO handle add id when zezo return it
-                    return newRow;
-                }
-
             } else
             {
                 throw new Error("All fields required.")
             }
         },
-        [handleAddProduct, validateOnProduct, errorAddProduct, errorUpdateProduct, handleUpdateProduct],
+        [handleAddProduct, validateOnProduct, errorAddProduct, errorUpdateProduct, handleUpdateProduct, handleNotification],
     );
-
+    //update id of new product with id of database
+    useEffect(() =>
+    {
+        if (newProduct)
+        {
+            let updatedRows = [];
+            rows.forEach(row =>
+            {
+                if (row.id === newProduct.id)
+                {
+                    newProduct.id = newProduct._id;
+                    delete newProduct._id;
+                    row = newProduct;
+                }
+                updatedRows.push(row);
+            })
+            setRows(updatedRows)
+            setNewProduct(null)
+        }
+    }, [newProduct, rows])
     const handleRowModesModelChange = (newRowModesModel) =>
     {
         setRowModesModel(newRowModesModel);

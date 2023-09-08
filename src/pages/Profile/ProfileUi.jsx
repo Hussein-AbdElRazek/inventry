@@ -23,7 +23,7 @@ const ProfileUi = (props) =>
         resetForm();
         setIsEdit(false)
     }
-    
+
     return (
         <Box
             component="main"
@@ -54,7 +54,7 @@ const ProfileUi = (props) =>
                     {(formik) => <Form>
                         <LoopOnInputs
                             inputs={profileDataInputs}
-                            disabled={!isEdit}
+                            disabled={!isEdit || isLoadingEditProfile}
                         />
                         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
                             {!isEdit ? (
@@ -65,7 +65,7 @@ const ProfileUi = (props) =>
                                 </>
                             ) : (
                                 <>
-                                    <Button onClick={() => handleCancelEdit(formik.resetForm)}>Cancel</Button>
+                                    <Button disabled={isLoadingEditProfile} onClick={() => handleCancelEdit(formik.resetForm)}>Cancel</Button>
                                     <LoadingButton loading={isLoadingEditProfile} type="submit" >Save Changes</LoadingButton>
                                 </>
                             )

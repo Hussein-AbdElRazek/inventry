@@ -12,7 +12,6 @@ const NavbarUi = (props) =>
 
             <Toolbar>
                 <Typography
-                    className='logo'
                     variant="h6"
                     noWrap
                     component="div"
