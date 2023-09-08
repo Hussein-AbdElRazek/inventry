@@ -1,6 +1,7 @@
 import { GridRowModes, GridToolbarContainer } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
+import { generateId } from '../../helpers/generateId';
 
 const ProductsToolBar = (props) =>
 {
@@ -8,7 +9,7 @@ const ProductsToolBar = (props) =>
 
     const handleClickAddRecord = () =>
     {
-        const id = Date.now().toLocaleString();
+        const id = generateId();
         setRows((oldRows) => [
             {
                 id,
@@ -31,7 +32,7 @@ const ProductsToolBar = (props) =>
     return (
         <GridToolbarContainer>
             <Button color="primary" startIcon={<AddIcon />} onClick={handleClickAddRecord}>
-                Add record
+                Add Product
             </Button>
         </GridToolbarContainer>
     );

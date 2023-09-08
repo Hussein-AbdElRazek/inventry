@@ -32,7 +32,11 @@ const ForgetPasswordUi = (props) =>
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button
+                        disabled={isLoadingForgetPassword}
+                        onClick={handleClose}>
+                        Cancel
+                    </Button>
                     <LoadingButton
                         disabled={isLoadingForgetPassword}
                         loading={isLoadingForgetPassword}

@@ -5,7 +5,8 @@ const AuthContext = React.createContext({
     token: '',
     isLoggedIn: false,
     logIn: (token) => { },
-    logOut: () => { }
+    logOut: () => { },
+    updateUserData: () => { },
 })
 
 export const AuthContextProvider = (props) =>
@@ -33,13 +34,17 @@ export const AuthContextProvider = (props) =>
         localStorage.clear()
     }
 
-
+    const updateUserDataHandler = (data)=>{
+        setUserData(data);
+        localStorage.setItem("userData", JSON.stringify(data));
+    }
     const contextValue = {
         userData: userData,
         token: token,
         isLoggedIn: userIsLoggedIn,
         logIn: loginHandler,
-        logOut: logOutHandler
+        logOut: logOutHandler,
+        updateUserData: updateUserDataHandler,
     }
 
 

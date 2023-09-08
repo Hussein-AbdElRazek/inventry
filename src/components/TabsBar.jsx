@@ -19,8 +19,11 @@ function TabsBar(props)
         }
     ];
     let url = window.location.pathname;
-
-    const [value, setValue] = useState(0);
+    const tabsUrl = {
+        "/all-products": 0,
+        "/limited-products": 1,
+    };
+    const [value, setValue] = useState(tabsUrl[url] || 0);
 
     const handleChange = (event, newValue) =>
     {
@@ -30,6 +33,7 @@ function TabsBar(props)
         <Tabs
             value={value}
             onChange={handleChange}
+            sx={{ ml: "24px" }}
         >
             {tabs.map(({ value, label, to }) =>
             {

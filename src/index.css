@@ -7,3 +7,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: rgb(249, 250, 251);
 }
+
+@media (max-width:540px) {
+  .logo {
+    display: none;
+  }
+}

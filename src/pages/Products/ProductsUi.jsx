@@ -32,10 +32,8 @@ const ProductsUi = (props) =>
         totalNumberOfItems,
         handleAddProduct,
         errorAddProduct,
-        isLoadingAddProduct,
         handleUpdateProduct,
         errorUpdateProduct,
-        isLoadingUpdateProduct,
         handleDeleteProduct,
         errorDeleteProduct,
         isLoadingDeleteProduct,
@@ -289,7 +287,7 @@ const ProductsUi = (props) =>
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <Box
                 sx={{
-                    height: 500,
+                    height: 400,
                     width: '90%',
                     '& .actions': {
                         color: 'text.secondary',
