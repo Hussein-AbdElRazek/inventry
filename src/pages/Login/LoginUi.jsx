@@ -29,9 +29,13 @@ const LoginUi = (props) =>
                     onSubmit={handleLogin}
                 >
                     {loginInputs.map((input) => (
-                        <Input key={input.name} {...input} />
+                        <Input
+                            key={input.name}
+                            {...input}
+                            disabled={isLoadingLogin}
+                        />
                     ))}
-                    <Box sx={{ width: "100%", textAlign: "right", mb: 3,mt:-3, fontSize: 14 }}>
+                    <Box sx={{ width: "100%", textAlign: "right", mb: 3, mt: -3, fontSize: 14 }}>
                         <Button variant="text" onClick={handleOpenForgetPassword} >
                             Forget password?
                         </Button>

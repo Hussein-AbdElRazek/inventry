@@ -24,7 +24,6 @@ const Login = () =>
             if (message === "success")
             {
                 authCtx.logIn(token, user)
-                console.log("user", user)
                 navigate("/", { replace: true });
             }
         };

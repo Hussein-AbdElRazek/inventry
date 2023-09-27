@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+
 import ProfileUi from './ProfileUi'
 import useHttp from '../../hooks/use-http';
 import AuthContext from '../../store/auth-context';
 import ChangePasswordUi from './ChangePasswordUi';
-import { useNavigate } from 'react-router-dom';
 const Profile = () =>
 {
     const navigate = useNavigate();
@@ -15,6 +17,8 @@ const Profile = () =>
         isLoading: isLoadingChangePassword,
         sendRequest: changePassword
     } = useHttp();
+    const { enqueueSnackbar: popMessage } = useSnackbar();
+
     const authCtx = useContext(AuthContext);
     const [profileData] = useState(authCtx.userData);
     const [isEdit, setIsEdit] = useState(false);
@@ -53,6 +57,10 @@ const Profile = () =>
         {
             if (message === "success")
             {
+                popMessage("Password changed successfully",
+                    {
+                        variant: "success"
+                    })
                 handleCloseChangePassword()
             }
         };
@@ -66,10 +74,12 @@ const Profile = () =>
         );
     }
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-    const handleCloseChangePassword = () => {
+    const handleCloseChangePassword = () =>
+    {
         setIsChangePasswordOpen(false)
     }
-    const handleOpenChangePassword = () => {
+    const handleOpenChangePassword = () =>
+    {
         setIsChangePasswordOpen(true)
     }
     const handleLogout = () =>

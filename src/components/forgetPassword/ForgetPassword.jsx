@@ -1,5 +1,8 @@
+import { useSnackbar } from 'notistack';
+
 import useHttp from "../../hooks/use-http";
 import ForgetPasswordUi from "./ForgetPasswordUi"
+import CloseBtnNotistack from '../ui/CloseBtnNotistack';
 
 const ForgetPassword = (props) =>
 {
@@ -12,12 +15,16 @@ const ForgetPassword = (props) =>
         isLoading: isLoadingForgetPassword,
         sendRequest: forgetPassword
     } = useHttp();
+    
+    const { enqueueSnackbar: popMessage } = useSnackbar();
+
     const handleForgetPassword = (values) =>
     {
         const getResponse = ({ message }) =>
         {
             if (message === "success")
             {
+                popMessage("Password reset successfully, new password send to your email", { variant: "success", action: CloseBtnNotistack, persist: true })
                 handleClose()
             }
         };
