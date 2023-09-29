@@ -1,11 +1,36 @@
 # Inventory Management System
 
-The objective is to ensure accurate recording, computation, and production of sales reports, providing reliable insights into business performance. By achieving these goals, the project aims to enhance mentorint , recording , keep track of products , bussiness and inventory management processes
+These my first task in my internship @Asterisc Technocrat
+
+The objective is to ensure accurate recording, computation, and production of sales reports, providing reliable insights into business performance. By achieving these goals, the project aims to enhance operational efficiency, facilitate informed decision-making, and optimize sales and inventory management processes
 
 ## Visit Website from here:
 
-https://inventry-zeta.vercel.app/signup
+https://inventry-zeta.vercel.app/
 
+## Main Features:
+
+* Sign Up
+* Login
+* Full CRUD Table for manage your products
+* Add product
+* Update product
+* Delete product
+* Get all limited products
+* Notification when product get limited
+* Edit profile
+* Change password
+* Forget password
+
+## Technolgies used in these project:
+
+* React.js
+* Material UI
+* @mui/x-data-grid
+* Formik
+* React router dom
+* Yup
+  
 ## Available Scripts
 
 In the project directory, you can run:
@@ -15,14 +40,6 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
@@ -31,14 +48,3 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
