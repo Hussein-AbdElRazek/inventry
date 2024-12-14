@@ -4,9 +4,7 @@ These my first task in my internship @Asterisc Technocrat
 
 The objective is to ensure accurate recording, computation, and production of sales reports, providing reliable insights into business performance. By achieving these goals, the project aims to enhance operational efficiency, facilitate informed decision-making, and optimize sales and inventory management processes
 
-## Visit Website from here:
 
-https://inventry-zeta.vercel.app/
 
 ## Main Features:
 
